@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Profil de {{ target.username }}{% endblock %}
+{% block content %}
+<h1>Profil de {{ target.username }}</h1>
+
+<table>
+    <tr><th>ID</th><td>{{ target.id }}</td></tr>
+    <tr><th>Pseudo</th><td>{{ target.username }}</td></tr>
+    <tr>
+        <th>Role</th>
+        <td>
+            {% if target.role == 'admin' %}
+                <span class="badge-admin">Administrateur</span>
+            {% else %}
+                <span class="badge-user">Utilisateur</span>
+            {% endif %}
+        </td>
+    </tr>
+    <tr><th>Inscrit le</th><td>{{ target.created_at }}</td></tr>
+</table>
+{% endblock %}

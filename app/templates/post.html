@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<div class="meta">Par <a href="/profile/{{ post.username }}">{{ post.username }}</a> le {{ post.created_at }}</div>
+<p>{{ post.content }}</p>
+
+<hr>
+<h3>Commentaires</h3>
+{% if comments %}
+    {% for c in comments %}
+    <div class="post">
+        <div class="meta"><strong>{{ c.username }}</strong> - {{ c.created_at }}</div>
+        <p>{{ c.content }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p><em>Aucun commentaire pour l'instant.</em></p>
+{% endif %}
+
+<br><a href="/forum" class="btn">Retour au forum</a>
+{% endblock %}

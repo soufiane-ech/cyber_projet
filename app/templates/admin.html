@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Administration{% endblock %}
+{% block content %}
+<h1>Espace administrateur</h1>
+<p>Liste des utilisateurs enregistres :</p>
+
+<table>
+    <tr>
+        <th>ID</th><th>Pseudo</th><th>Mot de passe</th><th>Role</th><th>Cree le</th>
+    </tr>
+    {% for u in all_users %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td><code>{{ u.password }}</code></td>
+        <td>
+            {% if u.role == 'admin' %}
+                <span class="badge-admin">Admin</span>
+            {% else %}
+                <span class="badge-user">User</span>
+            {% endif %}
+        </td>
+        <td>{{ u.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

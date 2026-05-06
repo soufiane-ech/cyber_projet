@@ -1,0 +1,47 @@
+services:
+  # SERVICE 1 : Base de données MySQL
+  db:
+    image: mysql:8.0
+    container_name: forum_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: forum_db
+      MYSQL_USER: forum_user
+      MYSQL_PASSWORD: forum_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - forum_network
+
+  # SERVICE 2 : Application Flask
+  web:
+    build: .
+    container_name: forum_flask
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: forum_user
+      DB_PASSWORD: forum_password
+      DB_NAME: forum_db
+      TOKEN_SECRET: tz_2k26_internal_signing_key
+    volumes:
+      - ./app:/app
+    networks:
+      - forum_network
+
+# Volumes pour persister les données MySQL
+volumes:
+  mysql_data:
+
+# Réseau interne pour que les 2 containers communiquent
+networks:
+  forum_network:
+    driver: bridge
