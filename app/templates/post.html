@@ -19,6 +19,7 @@
             <div class="avatar">{{ post.username[0] }}</div>
         </a>
         <div>
+            <div style="color: var(--text-muted); font-size: 0.85em; margin-bottom: 2px;">Auteur du post :</div>
             <a href="/profile/{{ post.username }}" style="font-weight: 600; color: var(--text-primary);">{{ post.username }}</a>
             <div class="meta">{{ post.created_at.strftime('%d %b %Y a %H:%M') if post.created_at.strftime is defined else post.created_at }}</div>
         </div>
