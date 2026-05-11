@@ -1,27 +1,64 @@
 {% extends "base.html" %}
-{% block title %}Administration{% endblock %}
+{% block title %}Administration -- TalkZone{% endblock %}
 {% block content %}
-<h1>Espace administrateur</h1>
-<p>Liste des utilisateurs enregistres :</p>
-
-<table>
-    <tr>
-        <th>ID</th><th>Pseudo</th><th>Mot de passe</th><th>Role</th><th>Cree le</th>
-    </tr>
-    {% for u in all_users %}
-    <tr>
-        <td>{{ u.id }}</td>
-        <td>{{ u.username }}</td>
-        <td><code>{{ u.password }}</code></td>
-        <td>
-            {% if u.role == 'admin' %}
-                <span class="badge-admin">Admin</span>
-            {% else %}
-                <span class="badge-user">User</span>
-            {% endif %}
-        </td>
-        <td>{{ u.created_at }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="page-header">
+    <h1>Administration</h1>
+</div>
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.users }}</div>
+        <div class="stat-label">Utilisateurs</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.posts }}</div>
+        <div class="stat-label">Posts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.comments }}</div>
+        <div class="stat-label">Commentaires</div>
+    </div>
+</div>
+<div class="card-static">
+    <h2 style="font-size: 1.1em; font-weight: 600; margin-bottom: 20px;">Utilisateurs enregistres</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Pseudo</th><th>Email</th><th>Role</th><th>Inscrit le</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in all_users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="avatar avatar-sm">{{ u.username[0] }}</div>
+                            <a href="/profile/{{ u.username }}">{{ u.username }}</a>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted);">{{ u.email or '--' }}</td>
+                    <td>
+                        {% if u.role == 'admin' %}
+                            <span class="badge badge-admin">Admin</span>
+                        {% else %}
+                            <span class="badge badge-user">User</span>
+                        {% endif %}
+                    </td>
+                    <td class="meta">{{ u.created_at.strftime('%d %b %Y') if u.created_at.strftime is defined else u.created_at }}</td>
+                    <td>
+                        {% if u.id != user.id %}
+                        <form action="/admin/delete_user/{{ u.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer {{ u.username }} ?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                        {% else %}
+                        <span class="meta">Vous</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

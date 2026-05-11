@@ -1,22 +1,107 @@
 {% extends "base.html" %}
-{% block title %}Forum{% endblock %}
+{% block title %}Forum -- TalkZone{% endblock %}
 {% block content %}
-<h1>Forum</h1>
-<p>Bienvenue, <strong>{{ user.username }}</strong>.</p>
+<style>
+    .forum-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+    .post-card {
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+        transition: var(--transition); display: block; text-decoration: none; color: inherit;
+    }
+    .post-card:hover {
+        border-color: rgba(108, 99, 255, 0.4); box-shadow: var(--shadow); transform: translateY(-2px);
+    }
+    .post-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .post-card-title { font-size: 1.15em; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .post-card-body {
+        color: var(--text-secondary); font-size: 0.9em; line-height: 1.5; margin-bottom: 14px;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .post-card-footer { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .post-card-footer .stat { display: flex; align-items: center; gap: 4px; color: var(--text-muted); font-size: 0.82em; }
+    .sidebar-section { margin-bottom: 20px; }
+    .sidebar-section h3 {
+        font-size: 0.85em; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .category-list a {
+        display: block; padding: 8px 14px; border-radius: var(--radius-sm);
+        color: var(--text-secondary); text-decoration: none; font-size: 0.9em;
+        transition: var(--transition); margin-bottom: 4px;
+    }
+    .category-list a:hover, .category-list a.active { background: var(--accent-light); color: var(--accent); }
+    .sidebar-stat {
+        display: flex; justify-content: space-between; padding: 8px 0;
+        border-bottom: 1px solid rgba(42, 42, 74, 0.5); font-size: 0.9em;
+    }
+    .sidebar-stat .label { color: var(--text-muted); }
+    .sidebar-stat .value { color: var(--text-primary); font-weight: 600; }
+    @media (max-width: 900px) { .forum-layout { grid-template-columns: 1fr; } }
+</style>
 
-<div class="token-box">
-    Session token : {{ token }}
+<div class="page-header">
+    <h1>Forum</h1>
+    <a href="/new_post" class="btn btn-primary">+ Nouveau post</a>
 </div>
 
-<hr>
-
-{% for post in posts %}
-<div class="post">
-    <h3><a href="/post/{{ post.id }}">{{ post.title }}</a></h3>
-    <div class="meta">
-        Par <a href="/profile/{{ post.username }}">{{ post.username }}</a> le {{ post.created_at }}
+{% if search_query %}
+    <div class="alert" style="background: var(--accent-light); border: 1px solid rgba(108, 99, 255, 0.3); color: var(--accent);">
+        Resultats pour &laquo; <strong>{{ search_query }}</strong> &raquo; -- {{ posts|length }} post(s) trouve(s)
+        &nbsp; <a href="/forum" style="font-size: 0.85em;">Effacer</a>
     </div>
-    <p>{{ post.content }}</p>
+{% endif %}
+
+<div class="forum-layout">
+    <div>
+        {% if posts %}
+            {% for post in posts %}
+            <a href="/post/{{ post.id }}" class="post-card">
+                <div class="post-card-header">
+                    <div class="avatar avatar-sm">{{ post.username[0] }}</div>
+                    <div>
+                        <span style="font-weight: 500; font-size: 0.88em;">{{ post.username }}</span>
+                        <span class="meta" style="margin-left: 8px;">{{ post.created_at.strftime('%d %b %Y a %H:%M') if post.created_at.strftime is defined else post.created_at }}</span>
+                    </div>
+                </div>
+                <div class="post-card-title">{{ post.title }}</div>
+                <div class="post-card-body">{{ post.content }}</div>
+                <div class="post-card-footer">
+                    <span class="badge badge-category">{{ post.category }}</span>
+                    <span class="stat">{{ post.comment_count }} commentaire{{ 's' if post.comment_count > 1 else '' }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="card-static" style="text-align: center; padding: 60px 20px;">
+                <p style="font-size: 2em; margin-bottom: 12px;">...</p>
+                <p style="color: var(--text-muted);">Aucun post trouve.</p>
+                <a href="/new_post" class="btn btn-primary" style="margin-top: 16px;">Creer le premier post</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <aside>
+        <div class="card-static sidebar-section">
+            <h3>Categories</h3>
+            <div class="category-list">
+                <a href="/forum" class="{{ 'active' if not current_category else '' }}">Toutes les categories</a>
+                {% for cat in categories %}
+                    <a href="/forum?category={{ cat }}" class="{{ 'active' if current_category == cat else '' }}">{{ cat }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-static sidebar-section">
+            <h3>Statistiques</h3>
+            <div class="sidebar-stat"><span class="label">Membres</span><span class="value">{{ stats.users }}</span></div>
+            <div class="sidebar-stat"><span class="label">Posts</span><span class="value">{{ stats.posts }}</span></div>
+            <div class="sidebar-stat"><span class="label">Commentaires</span><span class="value">{{ stats.comments }}</span></div>
+        </div>
+        <div class="card-static sidebar-section">
+            <h3>A propos</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85em; line-height: 1.6;">
+                TalkZone est un forum communautaire pour les passionnes de tech et cybersecurite. Partagez vos connaissances !
+            </p>
+        </div>
+    </aside>
 </div>
-{% endfor %}
 {% endblock %}

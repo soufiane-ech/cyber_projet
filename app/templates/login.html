@@ -1,19 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion -- TalkZone{% endblock %}
 {% block content %}
-<h1>Connexion</h1>
+<div style="max-width: 420px; margin: 60px auto;">
+    <div class="card-static" style="text-align: center;">
+        <div style="margin-bottom: 24px;">
+            <div style="width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), #a78bfa); display: flex; align-items: center; justify-content: center; font-size: 1.2em; font-weight: 700; color: white;">TZ</div>
+            <h1 style="font-size: 1.6em; margin-bottom: 6px;">Bienvenue sur TalkZone</h1>
+            <p style="color: var(--text-muted); font-size: 0.9em;">Connectez-vous pour rejoindre la discussion</p>
+        </div>
 
-{% if error %}<div class="error">{{ error }}</div>{% endif %}
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
 
-<form method="POST">
-    <label>Pseudo</label>
-    <input type="text" name="username" required>
-    <label>Mot de passe</label>
-    <input type="password" name="password" required>
-    <br><br>
-    <button type="submit" class="btn">Se connecter</button>
-</form>
+        <form method="POST" style="text-align: left;">
+            <div class="form-group">
+                <label for="username">Pseudo</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Votre pseudo" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Votre mot de passe" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px;">Se connecter</button>
+        </form>
 
-<hr>
-<p><small>Comptes de test : marie / mariepwd, paul / paulpwd, admin / adminpwd</small></p>
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+            <p style="color: var(--text-muted); font-size: 0.9em;">Pas encore de compte ?
+                <a href="/register" style="font-weight: 600;">Creer un compte</a>
+            </p>
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <p style="color: var(--text-muted); font-size: 0.78em; margin-bottom: 4px;">Comptes de test</p>
+            <p style="color: var(--text-secondary); font-size: 0.8em; font-family: monospace;">
+                marie / mariepwd -- paul / paulpwd -- admin / adminpwd
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

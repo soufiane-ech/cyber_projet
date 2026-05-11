@@ -1,22 +1,71 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ post.title }} -- TalkZone{% endblock %}
 {% block content %}
-<h1>{{ post.title }}</h1>
-<div class="meta">Par <a href="/profile/{{ post.username }}">{{ post.username }}</a> le {{ post.created_at }}</div>
-<p>{{ post.content }}</p>
+<style>
+    .comment-item { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid rgba(42, 42, 74, 0.4); }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-body { flex: 1; }
+    .comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .comment-text { color: var(--text-secondary); font-size: 0.92em; line-height: 1.6; white-space: pre-wrap; }
+</style>
 
-<hr>
-<h3>Commentaires</h3>
-{% if comments %}
-    {% for c in comments %}
-    <div class="post">
-        <div class="meta"><strong>{{ c.username }}</strong> - {{ c.created_at }}</div>
-        <p>{{ c.content }}</p>
+<div style="margin-bottom: 16px;">
+    <a href="/forum" style="color: var(--text-muted); font-size: 0.85em;">Retour au forum</a>
+</div>
+
+<div class="card-static" style="margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <a href="/profile/{{ post.username }}" style="text-decoration: none;">
+            <div class="avatar">{{ post.username[0] }}</div>
+        </a>
+        <div>
+            <a href="/profile/{{ post.username }}" style="font-weight: 600; color: var(--text-primary);">{{ post.username }}</a>
+            <div class="meta">{{ post.created_at.strftime('%d %b %Y a %H:%M') if post.created_at.strftime is defined else post.created_at }}</div>
+        </div>
+        <span class="badge badge-category" style="margin-left: auto;">{{ post.category }}</span>
     </div>
-    {% endfor %}
-{% else %}
-    <p><em>Aucun commentaire pour l'instant.</em></p>
-{% endif %}
+    <h1 style="font-size: 1.6em; font-weight: 700; margin-bottom: 16px;">{{ post.title }}</h1>
+    <div style="color: var(--text-secondary); line-height: 1.8; font-size: 0.95em; white-space: pre-wrap;">{{ post.content }}</div>
+    {% if user.username == post.username or user.role == 'admin' %}
+    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <form action="/post/{{ post.id }}/delete" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ce post ?');">
+            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
 
-<br><a href="/forum" class="btn">Retour au forum</a>
+<div class="card-static">
+    <h2 style="font-size: 1.15em; font-weight: 600; margin-bottom: 20px;">
+        Commentaires ({{ comments|length }})
+    </h2>
+    {% if comments %}
+        {% for c in comments %}
+        <div class="comment-item">
+            <a href="/profile/{{ c.username }}" style="text-decoration: none;">
+                <div class="avatar avatar-sm">{{ c.username[0] }}</div>
+            </a>
+            <div class="comment-body">
+                <div class="comment-header">
+                    <a href="/profile/{{ c.username }}" style="font-weight: 600; font-size: 0.88em; color: var(--text-primary);">{{ c.username }}</a>
+                    <span class="meta">{{ c.created_at.strftime('%d %b %Y a %H:%M') if c.created_at.strftime is defined else c.created_at }}</span>
+                </div>
+                <div class="comment-text">{{ c.content }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted); text-align: center; padding: 24px 0;">Aucun commentaire pour l instant. Soyez le premier !</p>
+    {% endif %}
+
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <h3 style="font-size: 0.95em; font-weight: 600; margin-bottom: 12px;">Ajouter un commentaire</h3>
+        <form action="/post/{{ post.id }}/comment" method="POST">
+            <div class="form-group">
+                <textarea name="content" class="form-control" rows="3" placeholder="Ecrivez votre commentaire..." required style="min-height: 80px;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Publier</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

@@ -1,21 +1,77 @@
 {% extends "base.html" %}
-{% block title %}Profil de {{ target.username }}{% endblock %}
+{% block title %}Profil de {{ target.username }} -- TalkZone{% endblock %}
 {% block content %}
-<h1>Profil de {{ target.username }}</h1>
+<style>
+    .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+    .profile-info h1 { font-size: 1.6em; font-weight: 700; margin-bottom: 4px; }
+    .profile-stats { display: flex; gap: 24px; margin-top: 12px; }
+    .profile-stat { text-align: center; }
+    .profile-stat .num { font-size: 1.3em; font-weight: 700; color: var(--accent); }
+    .profile-stat .lbl { font-size: 0.78em; color: var(--text-muted); }
+    .user-post-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 14px 0; border-bottom: 1px solid rgba(42, 42, 74, 0.4);
+    }
+    .user-post-item:last-child { border-bottom: none; }
+    .user-post-item a { font-weight: 500; color: var(--text-primary); }
+    .user-post-item a:hover { color: var(--accent); }
+</style>
 
-<table>
-    <tr><th>ID</th><td>{{ target.id }}</td></tr>
-    <tr><th>Pseudo</th><td>{{ target.username }}</td></tr>
-    <tr>
-        <th>Role</th>
-        <td>
-            {% if target.role == 'admin' %}
-                <span class="badge-admin">Administrateur</span>
-            {% else %}
-                <span class="badge-user">Utilisateur</span>
+<div class="card-static" style="margin-bottom: 24px;">
+    <div class="profile-header">
+        <div class="avatar avatar-xl">{{ target.username[0] }}</div>
+        <div class="profile-info">
+            <h1>
+                {{ target.username }}
+                {% if target.role == 'admin' %}
+                    <span class="badge badge-admin">Admin</span>
+                {% else %}
+                    <span class="badge badge-user">Membre</span>
+                {% endif %}
+            </h1>
+            {% if target.bio %}
+                <p style="color: var(--text-secondary); font-size: 0.92em; margin-top: 6px;">{{ target.bio }}</p>
             {% endif %}
-        </td>
-    </tr>
-    <tr><th>Inscrit le</th><td>{{ target.created_at }}</td></tr>
-</table>
+            <div style="margin-top: 10px; color: var(--text-muted); font-size: 0.85em;">
+                {% if target.email %}{{ target.email }} -- {% endif %}
+                Inscrit le {{ target.created_at.strftime('%d %b %Y') if target.created_at.strftime is defined else target.created_at }}
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="num">{{ user_posts|length }}</div>
+                    <div class="lbl">Posts</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="num">{{ comment_count }}</div>
+                    <div class="lbl">Commentaires</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if user.username == target.username %}
+    <div style="padding-top: 16px; border-top: 1px solid var(--border);">
+        <a href="/profile/edit" class="btn btn-primary btn-sm">Editer mon profil</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card-static">
+    <h2 style="font-size: 1.1em; font-weight: 600; margin-bottom: 16px;">Posts de {{ target.username }}</h2>
+    {% if user_posts %}
+        {% for p in user_posts %}
+        <div class="user-post-item">
+            <div>
+                <a href="/post/{{ p.id }}">{{ p.title }}</a>
+                <div class="meta" style="margin-top: 2px;">
+                    <span class="badge badge-category" style="font-size: 0.7em;">{{ p.category }}</span>
+                    <span style="margin-left: 6px;">{{ p.created_at.strftime('%d %b %Y') if p.created_at.strftime is defined else p.created_at }}</span>
+                </div>
+            </div>
+            <span class="meta">{{ p.comment_count }} com.</span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted); text-align: center; padding: 20px;">Aucun post pour l instant.</p>
+    {% endif %}
+</div>
 {% endblock %}

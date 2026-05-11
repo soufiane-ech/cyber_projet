@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Nouveau post -- TalkZone{% endblock %}
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+    <div class="page-header">
+        <h1>Nouveau post</h1>
+    </div>
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    <div class="card-static">
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Titre du post</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="Un titre clair et descriptif..." required>
+            </div>
+            <div class="form-group">
+                <label for="category">Categorie</label>
+                <select id="category" name="category" class="form-control">
+                    <option value="General">General</option>
+                    <option value="Technique">Technique</option>
+                    <option value="Cybersecurite">Cybersecurite</option>
+                    <option value="Annonces">Annonces</option>
+                    <option value="Questions">Questions</option>
+                    <option value="Projets">Projets</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="content">Contenu</label>
+                <textarea id="content" name="content" class="form-control" rows="10" placeholder="Ecrivez votre message ici..." required style="min-height: 200px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn btn-primary">Publier</button>
+                <a href="/forum" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
