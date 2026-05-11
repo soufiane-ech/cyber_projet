@@ -43,12 +43,12 @@ CREATE TABLE IF NOT EXISTS comments (
 -- ============================================
 
 -- Utilisateurs (memes credentials qu avant + nouveaux)
-INSERT INTO users (username, password, email, bio, role) VALUES
-    ('marie', 'mariepwd', 'marie@talkzone.com', 'Passionnee de cybersecurite et developpement web. Etudiante en 4eme annee.', 'user'),
-    ('paul', 'paulpwd', 'paul@talkzone.com', 'Developpeur backend, fan de Docker et Linux.', 'user'),
-    ('admin', 'adminpwd', 'admin@talkzone.com', 'Administrateur du forum TalkZone. Contactez-moi pour tout probleme.', 'admin'),
-    ('sarah', 'sarahpwd', 'sarah@talkzone.com', 'Etudiante en securite des reseaux. J''adore le CTF !', 'user'),
-    ('lucas', 'lucaspwd', 'lucas@talkzone.com', 'Pentester junior, curieux de tout.', 'user');
+INSERT INTO users (id, username, password, email, bio, role) VALUES
+    (1, 'marie', 'mariepwd', 'marie@talkzone.com', 'Passionnee de cybersecurite et developpement web. Etudiante en 4eme annee.', 'user'),
+    (2, 'paul', 'paulpwd', 'paul@talkzone.com', 'Developpeur backend, fan de Docker et Linux.', 'user'),
+    (3, 'admin', 'adminpwd', 'admin@talkzone.com', 'Administrateur du forum TalkZone. Contactez-moi pour tout probleme.', 'admin'),
+    (4, 'sarah', 'sarahpwd', 'sarah@talkzone.com', 'Etudiante en securite des reseaux. J''adore le CTF !', 'user'),
+    (5, 'lucas', 'lucaspwd', 'lucas@talkzone.com', 'Pentester junior, curieux de tout.', 'user');
 
 -- Posts varies couvrant plusieurs categories
 INSERT INTO posts (user_id, title, content, category) VALUES

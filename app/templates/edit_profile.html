@@ -17,6 +17,10 @@
 
         <form method="POST">
             <div class="form-group">
+                <label>ID Utilisateur</label>
+                <input type="text" class="form-control" value="#{{ profile.id }}" disabled style="background: rgba(255,255,255,0.05); color: var(--text-muted); cursor: not-allowed;">
+            </div>
+            <div class="form-group">
                 <label for="username">Pseudo</label>
                 <input type="text" id="username" name="username" class="form-control" value="{{ profile.username }}" required>
             </div>
