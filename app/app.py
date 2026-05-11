@@ -184,12 +184,29 @@ def forum():
     categories = [row['category'] for row in cur.fetchall()]
 
     # Stats du forum
-    cur.execute("SELECT COUNT(*) AS count FROM users")
-    user_count = cur.fetchone()['count']
-    cur.execute("SELECT COUNT(*) AS count FROM posts")
-    post_count = cur.fetchone()['count']
-    cur.execute("SELECT COUNT(*) AS count FROM comments")
-    comment_count = cur.fetchone()['count']
+    if category_filter:
+        # Utilisateurs actifs (auteurs de posts ou commentaires) dans cette categorie
+        cur.execute("""
+            SELECT COUNT(DISTINCT u_id) AS count FROM (
+                SELECT user_id AS u_id FROM posts WHERE category = %s
+                UNION
+                SELECT c.user_id AS u_id FROM comments c JOIN posts p ON c.post_id = p.id WHERE p.category = %s
+            ) as tmp
+        """, (category_filter, category_filter))
+        user_count = cur.fetchone()['count']
+
+        cur.execute("SELECT COUNT(*) AS count FROM posts WHERE category = %s", (category_filter,))
+        post_count = cur.fetchone()['count']
+
+        cur.execute("SELECT COUNT(c.id) AS count FROM comments c JOIN posts p ON c.post_id = p.id WHERE p.category = %s", (category_filter,))
+        comment_count = cur.fetchone()['count']
+    else:
+        cur.execute("SELECT COUNT(*) AS count FROM users")
+        user_count = cur.fetchone()['count']
+        cur.execute("SELECT COUNT(*) AS count FROM posts")
+        post_count = cur.fetchone()['count']
+        cur.execute("SELECT COUNT(*) AS count FROM comments")
+        comment_count = cur.fetchone()['count']
 
     cur.close()
     conn.close()
