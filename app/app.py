@@ -24,8 +24,7 @@ def db():
 # ============================================
 def make_token(user_id, username):
     now = datetime.now()
-    slot = (now.hour // 6) * 6
-    time_part = now.strftime(f"%Y-%m-%d-{slot:02d}")
+    time_part = now.strftime("%Y-%m-%d")
     uid_hex = format(user_id, 'x')
     raw = f"{uid_hex}|{username}|{time_part}"
     return hashlib.sha256(raw.encode()).hexdigest()
