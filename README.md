@@ -53,5 +53,9 @@ docker-compose down
 | 5 | lucas | lucaspwd | user |
 
 ---
+## Description des scripts
+
+*   **Script de recherche du token** : Script de brute force permettant de retrouver la logique de génération d’un token SHA-256 en testant plusieurs combinaisons d’identifiants, formats de date, séparateurs et ordres des paramètres.
+* **Script d’exploitation** : Script automatisant la génération d’un token administrateur valide, la vérification de l’accès au panneau d’administration et l’injection automatique du cookie d’authentification dans le navigateur.
 
 *Projet P05 — Red Team — EMINES UM6P — 2025/2026*
